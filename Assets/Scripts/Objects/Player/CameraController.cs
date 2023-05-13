@@ -1,6 +1,8 @@
 /******
 작성자 : 박성택
 작성 일자 : 23.05.13
+
+참조 : https://artsung410.tistory.com/88?category=1108662
  ******/
 using UnityEngine;
 
