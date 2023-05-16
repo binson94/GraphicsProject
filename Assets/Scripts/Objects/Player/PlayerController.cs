@@ -23,8 +23,11 @@ public class PlayerController : MonoBehaviour
     /// <summary> 매 프레임마다 카메라 회전, 캐릭터 이동 업데이트 </summary>
     void Update()
     {
-        _cameraController.RotateCamera();
-        Move();
+        if(GameManager.Ingame.GameState == Define.GameState.Play)
+        {
+            _cameraController.RotateCamera();
+            Move();
+        }
     }
 
     /// <summary> 입력에 따른 캐릭터 이동 </summary>

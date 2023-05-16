@@ -10,8 +10,14 @@ using UnityEngine.AI;
 
 public class MonsterController : MonoBehaviour
 {
+    /// <summary> 박스 열었을 때, 박스 추적하는 기간, 시간 종료 시 원래 위치로 돌아감 </summary>
+    const float BOXTIMER = 20;
+
+    /// <summary> 박스 추적하는 남은 기간 </summary>
+    float boxTimer = 0;
+    Coroutine boxCoroutine = null;
+
     /// <summary> 길찾기 기능 </summary>
-    [SerializeField]
     NavMeshAgent _agent;
 
     /// <summary> 현재 감지 중인 플레이어 </summary>
@@ -21,6 +27,7 @@ public class MonsterController : MonoBehaviour
 
     private void Start()
     {
+        _agent= GetComponent<NavMeshAgent>();
         _originPos = transform.position;
     }
 
@@ -36,10 +43,45 @@ public class MonsterController : MonoBehaviour
         _agent.SetDestination(dest);
     }
 
+    #region BoxMove
+    /// <summary> 박스 위치로 이동 </summary>
+    public void ChaseBox(Vector3 boxPos)
+    {
+        SetDestination(boxPos);
+
+        boxTimer = BOXTIMER;
+
+        if (boxCoroutine == null)
+            boxCoroutine = StartCoroutine(BoxTimerCoroutine());
+    }
+
+    /// <summary> 박스 추적 타이머 </summary>
+    IEnumerator BoxTimerCoroutine()
+    {
+        while(boxTimer > 0)
+        {
+            boxTimer -= 0.25f;
+            yield return new WaitForSeconds(0.25f);
+        }
+
+        boxCoroutine = null;
+    }
+
+    /// <summary> 박스 추적 종료 </summary>
+    void StopChaseBox()
+    {
+        if (boxCoroutine != null)
+            StopCoroutine(boxCoroutine);
+        boxCoroutine = null;
+    }
+    #endregion BoxMove
+
     #region PlayerFollow
     /// <summary> 충돌체에서 플레이어 입장 감지 </summary>
     public void SetTarget(PlayerController player)
     {
+        //우선순위 박스보다 높음
+        StopChaseBox();
         _player = player;
     }
 
