@@ -3,6 +3,7 @@
 작성 일자 : 23.05.13
  ******/
 using UnityEngine;
+using UnityEngine.UIElements;
 
 /// <summary> 플레이어 조작을 위한 클래스 </summary>
 public class PlayerController : MonoBehaviour
@@ -25,9 +26,20 @@ public class PlayerController : MonoBehaviour
     {
         if(GameManager.Ingame.GameState == Define.GameState.Play)
         {
-            _cameraController.RotateCamera();
+            SeeMouse();
             Move();
         }
+    }
+
+    float _rotateY;
+    float _rotationSpeed = 5f;
+    void SeeMouse()
+    {
+        _rotateY += Input.GetAxis("Mouse X") * _rotationSpeed;
+
+        transform.rotation = Quaternion.Euler(0, _rotateY, 0);
+
+        _cameraController.RotateCamera();
     }
 
     /// <summary> 입력에 따른 캐릭터 이동 </summary>
@@ -37,7 +49,7 @@ public class PlayerController : MonoBehaviour
         float rightWeight = Input.GetAxis("Horizontal");
 
         //카메라 회전에 따른 방향 획득
-        Vector3 moveVector = _cameraController.GetWeightedDirection(forwardWeight, rightWeight);
+        Vector3 moveVector = (Vector3.forward * forwardWeight + Vector3.right * rightWeight).normalized;
 
         transform.Translate(moveVector * Time.deltaTime * _moveSpeed);
     }
