@@ -1,6 +1,6 @@
 /******
 작성자 : 박성택
-작성 일자 : 23.05.13
+플레이어 조작 클래스
  ******/
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -24,13 +24,15 @@ public class PlayerController : MonoBehaviour
     /// <summary> 매 프레임마다 카메라 회전, 캐릭터 이동 업데이트 </summary>
     void Update()
     {
-        if(GameManager.Ingame.GameState == Define.GameState.Play)
+        if(GameManager.Instance.GameState == Define.GameState.Play)
         {
             SeeMouse();
             Move();
+            GetInput();
         }
     }
 
+    #region Move
     float _rotateY;
     float _rotationSpeed = 5f;
     void SeeMouse()
@@ -53,4 +55,36 @@ public class PlayerController : MonoBehaviour
 
         transform.Translate(moveVector * Time.deltaTime * _moveSpeed);
     }
+    #endregion Move
+
+    void GetInput()
+    {
+        if (Input.GetKeyDown(KeyCode.F))
+            OpenBox();
+    }
+
+    #region Box
+    Box _nearBox = null;
+    
+    /// <summary> 상자 감지 </summary>
+    public void FindBox(Box box)
+    {
+        _nearBox = box;
+    }
+
+    /// <summary> 상자 놓침 </summary>
+    public void LostBox(Box box)
+    {
+        if (_nearBox != null && _nearBox == box)
+            _nearBox = null;
+    }
+
+    /// <summary> 상자 열기 </summary>
+    void OpenBox()
+    {
+        if (GameManager.Instance.GameState == Define.GameState.Play)
+            if (_nearBox != null && _nearBox.Opened == false)
+                _nearBox.Open();
+    }
+    #endregion Box
 }

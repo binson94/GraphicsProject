@@ -1,6 +1,6 @@
 /******
 작성자 : 이우열
-작성 일자 : 23.05.09
+몬스터 조작 클래스
  ******/
 
 using System.Collections;
@@ -47,7 +47,7 @@ public class MonsterController : MonoBehaviour
 
     private void Awake()
     {
-        GameManager.Ingame.AddMonster(this);
+        GameManager.Instance.AddMonster(this);
     }
 
     private void Start()
@@ -55,9 +55,6 @@ public class MonsterController : MonoBehaviour
         _agent = GetComponent<NavMeshAgent>();
 
         patrolPos.Insert(0, transform.position);
-
-        //DEBUG
-        patrolPos.Add(transform.position + Vector3.forward * 5);
     }
 
     private void Update()
@@ -128,6 +125,7 @@ public class MonsterController : MonoBehaviour
         if (state == MonsterState.PlayerChase)
             return;
 
+        state = MonsterState.BoxChase;
         SetDestination(boxPos);
 
         //idempotent 하도록 설정
@@ -181,7 +179,7 @@ public class MonsterController : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.tag == "Player")
-            GameManager.Ingame.GameOver();
+            GameManager.Instance.GameOver();
     }
     #endregion PlayerChase
 }

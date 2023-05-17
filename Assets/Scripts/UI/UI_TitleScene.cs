@@ -1,10 +1,9 @@
 /******
-작성자 : 이우열
-작성 일자 : 23.05.17
+작성자 : 
+타이틀 씬 UI
  ******/
+
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public class UI_TitleScene : MonoBehaviour
 {
@@ -19,7 +18,7 @@ public class UI_TitleScene : MonoBehaviour
     /// <summary> 게임 시작 버튼 </summary>
     public void Btn_Start()
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(Define.Scene.Ingame);
     }
 
     /// <summary> 도움말 버튼 </summary>

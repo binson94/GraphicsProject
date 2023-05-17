@@ -12,4 +12,10 @@ public class Define
         Win,
         Lose,
     }
+
+    public enum Scene
+    {
+        Title,
+        Ingame,
+    }
 }
