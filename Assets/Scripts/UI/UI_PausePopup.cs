@@ -4,15 +4,13 @@ using UnityEngine;
 
 public class UI_PausePopup : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public void Btn_Retry()
     {
-        
+        SceneManager.LoadScene(Define.Scene.Ingame);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Btn_Exit()
     {
-        
+        SceneManager.LoadScene(Define.Scene.Title);
     }
 }

@@ -34,13 +34,14 @@ public class GameManager : MonoBehaviour
     /// <summary> 현재 게임 상태 </summary>
     public Define.GameState GameState { get; private set; } = Define.GameState.Play;
 
-
-    #region Monster&Box&Key
+    #region Monster
     /// <summary> 모든 몬스터들 </summary>
     List<MonsterController> _monsters = new List<MonsterController>();
     /// <summary> 몬스터 리스트에 추가 </summary>
     public void AddMonster(MonsterController monster) => _monsters.Add(monster);
+    #endregion Monster
 
+    #region Box
     /// <summary> 모든 상자들 </summary>
     List<Box> _boxes = new List<Box>();
     /// <summary> 박스 리스트에 추가 </summary>
@@ -53,9 +54,14 @@ public class GameManager : MonoBehaviour
             mon.StartChaseBox(boxPosition);
 
         if (hasKey)
+        {
+            OnKeyEarn?.Invoke(_currKey);
             _currKey++;
+        }
     }
+    #endregion Box
 
+    #region Key
     /// <summary> 무작위로 4개 열쇠 생성 </summary>
     void GenerateKey()
     {
@@ -63,7 +69,7 @@ public class GameManager : MonoBehaviour
 
         _maxKey = Mathf.Min(4, _boxes.Count);
 
-        while(keySet.Count < _maxKey)
+        while (keySet.Count < _maxKey)
             keySet.Add(UnityEngine.Random.Range(0, _boxes.Count));
 
         foreach (Box box in _boxes)
@@ -71,9 +77,11 @@ public class GameManager : MonoBehaviour
 
         foreach (int idx in keySet)
         {
-            Debug.Log(idx);
             _boxes[idx].HasKey = true;
+
+#if UNITY_EDITOR
             Debug.Log(_boxes[idx].name);
+#endif
         }
     }
 
@@ -81,12 +89,17 @@ public class GameManager : MonoBehaviour
     int _currKey = 0;
     /// <summary> 탈출에 필요한 열쇠 갯수 </summary>
     int _maxKey;
-    #endregion Monster&Box&Key
 
+    /// <summary> 탈출구 열기 가능 여부 </summary>
+    public bool CanOpenDoor => _currKey >= _maxKey;
+    #endregion Key
+
+    /// <summary> 열쇠 획득 UI 반영 </summary>
+    public Action<int> OnKeyEarn { get; set; } = null;
     /// <summary> 일시 정지 UI 닫기 </summary>
     public Action ClosePause { get; set; } = null;
     /// <summary> 게임 오버 UI 띄우기 </summary>
-    public Action OnGameOver { get; set; } = null;
+    public Action<bool> OnGameOver { get; set; } = null;
 
     #region Pause
     /// <summary> 일시 정지 </summary>
@@ -127,16 +140,42 @@ public class GameManager : MonoBehaviour
     }
     #endregion Pause
 
+    /// <summary> 문 열기 시작 - 게임 승리 </summary>
+    public void GameWin()
+    {
+#if UNITY_EDITOR
+        Debug.Log("win");
+#endif
+        GameState = Define.GameState.Win;
+
+        ClosePause?.Invoke();
+    }
+
+    /// <summary> 문 열기 완료 - UI 띄우기 </summary>
+    public void ShowWinUI()
+    {
+        Time.timeScale = 0;
+        Cursor.visible = true;
+
+        OnGameOver?.Invoke(true);
+        ClosePause?.Invoke();
+    }
+
     /// <summary> 게임 패배 </summary>
     public void GameOver()
     {
+        if (GameState == Define.GameState.Win)
+            return;
+
+#if UNITY_EDITOR
         Debug.Log("Game Over");
+#endif
         GameState = Define.GameState.Lose;
         Time.timeScale = 0;
 
         Cursor.visible = true;
 
-        OnGameOver?.Invoke();
+        OnGameOver?.Invoke(false);
         ClosePause?.Invoke();
     }
 
@@ -156,9 +195,17 @@ public class GameManager : MonoBehaviour
     {
         ClosePause = null;
         OnGameOver = null;
+        OnKeyEarn = null;
+
         _currKey = 0;
 
         _monsters.Clear();
         _boxes.Clear();
+    }
+
+    public void DEBUG_OPENALL()
+    {
+        foreach (Box b in _boxes)
+            b.Open();
     }
 }

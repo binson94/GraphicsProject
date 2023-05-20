@@ -17,8 +17,22 @@ public class MonsterController : MonoBehaviour
         PlayerChase,
     }
 
+    /// <summary> 느낌표 마크 </summary>
+    [SerializeField]
+    GameObject _exclamationMark;
+
     /// <summary> 몬스터의 현재 상태 </summary>
-    MonsterState state { get; set; } = MonsterState.Patrol;
+    MonsterState _state = MonsterState.Patrol;
+    /// <summary> 몬스터의 현재 상태 </summary>
+    MonsterState State
+    {
+        get => _state;
+        set
+        {
+            _exclamationMark.SetActive(value == MonsterState.PlayerChase);
+            _state = value;
+        }
+    }
     /// <summary> 길찾기 기능 </summary>
     NavMeshAgent _agent;
 
@@ -65,7 +79,7 @@ public class MonsterController : MonoBehaviour
     /// <summary> 현재 상태에 따른 행동 결정 </summary>
     void MoveByState()
     {
-        switch (state)
+        switch (State)
         {
             case MonsterState.Patrol:
                 ArriveCheck();
@@ -110,7 +124,7 @@ public class MonsterController : MonoBehaviour
     /// <summary> 순찰 시작 </summary>
     void StartPatrol(int posIdx)
     {
-        state = MonsterState.Patrol;
+        State = MonsterState.Patrol;
         _patrolIdx = posIdx;
         SetDestination(patrolPos[posIdx]);
     }
@@ -122,10 +136,10 @@ public class MonsterController : MonoBehaviour
     public void StartChaseBox(Vector3 boxPos)
     {
         //플레이어 추적이 우선순위 더 높음
-        if (state == MonsterState.PlayerChase)
+        if (State == MonsterState.PlayerChase)
             return;
 
-        state = MonsterState.BoxChase;
+        State = MonsterState.BoxChase;
         SetDestination(boxPos);
 
         //idempotent 하도록 설정
@@ -161,7 +175,7 @@ public class MonsterController : MonoBehaviour
     /// <summary> 충돌체에서 플레이어 입장 감지 </summary>
     public void SetTarget(PlayerController player)
     {
-        state = MonsterState.PlayerChase;
+        State = MonsterState.PlayerChase;
         //우선순위 박스보다 높음
         StopChaseBox();
         _player = player;
@@ -170,7 +184,7 @@ public class MonsterController : MonoBehaviour
     /// <summary> 충돌체에서 플레이어 퇴장 감지 -> 원래 위치로 이동 </summary>
     public void LostTarget()
     {
-        state = MonsterState.Patrol;
+        State = MonsterState.Patrol;
         _player = null;
 
         StartPatrol(0);

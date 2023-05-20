@@ -50,7 +50,6 @@ public class PlayerController : MonoBehaviour
         float forwardWeight = Input.GetAxis("Vertical");
         float rightWeight = Input.GetAxis("Horizontal");
 
-        //카메라 회전에 따른 방향 획득
         Vector3 moveVector = (Vector3.forward * forwardWeight + Vector3.right * rightWeight).normalized;
 
         transform.Translate(moveVector * Time.deltaTime * _moveSpeed);
@@ -60,11 +59,17 @@ public class PlayerController : MonoBehaviour
     void GetInput()
     {
         if (Input.GetKeyDown(KeyCode.F))
-            OpenBox();
+            Interact();
+
+#if UNITY_EDITOR
+        if (Input.GetKey(KeyCode.L))
+            GameManager.Instance.DEBUG_OPENALL();
+#endif
     }
 
     #region Box
     Box _nearBox = null;
+    Door _nearDoor = null;
     
     /// <summary> 상자 감지 </summary>
     public void FindBox(Box box)
@@ -79,12 +84,30 @@ public class PlayerController : MonoBehaviour
             _nearBox = null;
     }
 
-    /// <summary> 상자 열기 </summary>
-    void OpenBox()
+    /// <summary> 문 감지 </summary>
+    public void FindDoor(Door door)
+    {
+        _nearDoor = door;
+    }
+
+    /// <summary> 문 놓침 </summary>
+    public void LostDoor(Door door)
+    {
+        if(_nearDoor != null && _nearDoor == door)
+            _nearDoor = null;
+    }
+
+    /// <summary> 상자 또는 문 열기 </summary>
+    void Interact()
     {
         if (GameManager.Instance.GameState == Define.GameState.Play)
+        {
             if (_nearBox != null && _nearBox.Opened == false)
                 _nearBox.Open();
+            
+            if(_nearDoor != null)
+                _nearDoor.Open();
+        }
     }
     #endregion Box
 }
