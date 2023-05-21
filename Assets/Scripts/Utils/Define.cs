@@ -18,4 +18,22 @@ public class Define
         Title,
         Ingame,
     }
+
+    public enum Sound
+    {
+        SFX,
+        BGM,
+        MaxCount
+    }
+
+    public enum SFX
+    {
+        MaxCount
+    }
+    public enum BGM 
+    {
+        MaxCount
+    }
+
+
 }
