@@ -1,7 +1,3 @@
-/******
-작성자 : 
-
- ******/
 
 using UnityEngine;
 

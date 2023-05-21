@@ -22,6 +22,7 @@ public class MonsterController : MonoBehaviour
     GameObject _exclamationMark;
 
     /// <summary> 몬스터의 현재 상태 </summary>
+    [SerializeField]
     MonsterState _state = MonsterState.Patrol;
     /// <summary> 몬스터의 현재 상태 </summary>
     MonsterState State
@@ -88,8 +89,8 @@ public class MonsterController : MonoBehaviour
             //    //DO NOTHING
             //    break;
             case MonsterState.PlayerChase:
-                if(_player != null)
-                SetDestination(_player.transform.position);
+                if (_player != null)
+                    SetDestination(_player.transform.position);
                 break;
         }
     }
