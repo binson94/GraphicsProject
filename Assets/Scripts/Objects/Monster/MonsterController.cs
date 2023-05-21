@@ -43,16 +43,15 @@ public class MonsterController : MonoBehaviour
     [SerializeField]
     List<Vector3> patrolPos = new List<Vector3>();
     /// <summary> 순찰 시 현재 목적지 index </summary>
+    [SerializeField]
     int _patrolIdx = 0;
     #endregion Patrol
 
     #region BoxChase
     /// <summary> 박스 열었을 때, 박스 추적하는 기간, 시간 종료 시 원래 위치로 돌아감 </summary>
-    const float BOXTIMER = 20;
+    const float TIMER_START = 20;
     /// <summary> 박스 추적하는 남은 기간 </summary>
-    float boxTimer = 0;
-    /// <summary> 박스 추적 타이머 코루틴 </summary>
-    Coroutine boxCoroutine = null;
+    float remainTimer = 0;
     #endregion BoxChase
 
     #region PlayerChase
@@ -85,9 +84,9 @@ public class MonsterController : MonoBehaviour
             case MonsterState.Patrol:
                 ArriveCheck();
                 break;
-            //case MonsterState.BoxChase:
-            //    //DO NOTHING
-            //    break;
+            case MonsterState.BoxChase:
+                BoxTimer();
+                break;
             case MonsterState.PlayerChase:
                 if (_player != null)
                     SetDestination(_player.transform.position);
@@ -115,7 +114,7 @@ public class MonsterController : MonoBehaviour
     /// <summary> 현재 순찰 목적지에 도착했는 지 검사 </summary>
     void ArriveCheck()
     {
-        if (_agent.remainingDistance <= 0.01f)
+        if (Vector3.Distance(transform.position, _agent.destination) <= 0.01f)
         {
             int nextIdx = (_patrolIdx + 1) % patrolPos.Count;
             StartPatrol(nextIdx);
@@ -144,31 +143,16 @@ public class MonsterController : MonoBehaviour
         SetDestination(boxPos);
 
         //idempotent 하도록 설정
-        boxTimer = BOXTIMER;
-
-        if (boxCoroutine == null)
-            boxCoroutine = StartCoroutine(BoxTimerCoroutine());
+        remainTimer = TIMER_START;
     }
 
     /// <summary> 박스 추적 타이머 </summary>
-    IEnumerator BoxTimerCoroutine()
+    void BoxTimer()
     {
-        while(boxTimer > 0)
-        {
-            boxTimer -= 0.25f;
-            yield return new WaitForSeconds(0.25f);
-        }
+        remainTimer -= Time.deltaTime;
 
-        boxCoroutine = null;
-        StartPatrol(0);
-    }
-
-    /// <summary> 박스 추적 종료 </summary>
-    void StopChaseBox()
-    {
-        if (boxCoroutine != null)
-            StopCoroutine(boxCoroutine);
-        boxCoroutine = null;
+        if (remainTimer <= 0)
+            StartPatrol(0);
     }
     #endregion BoxChase
 
@@ -177,8 +161,6 @@ public class MonsterController : MonoBehaviour
     public void SetTarget(PlayerController player)
     {
         State = MonsterState.PlayerChase;
-        //우선순위 박스보다 높음
-        StopChaseBox();
         _player = player;
     }
 

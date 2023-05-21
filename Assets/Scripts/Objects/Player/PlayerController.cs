@@ -12,13 +12,16 @@ public class PlayerController : MonoBehaviour
     CameraController _cameraController = new CameraController();
 
     /// <summary> 플레이어 이동 속도 </summary>
-    [SerializeField]
-    float _moveSpeed = 5f;
+    //[SerializeField]
+    float _moveSpeed = 10f;
+
+    Rigidbody playerRigid;
 
     /// <summary> 카메라 컨트롤러 설정 </summary>
     private void Start()
     {
         _cameraController.Init(Camera.main);
+        playerRigid = GetComponent<Rigidbody>();
     }
 
     /// <summary> 매 프레임마다 카메라 회전, 캐릭터 이동 업데이트 </summary>
@@ -50,9 +53,10 @@ public class PlayerController : MonoBehaviour
         float forwardWeight = Input.GetAxis("Vertical");
         float rightWeight = Input.GetAxis("Horizontal");
 
-        Vector3 moveVector = (Vector3.forward * forwardWeight + Vector3.right * rightWeight).normalized;
+        Vector3 moveVector = (transform.forward * forwardWeight + transform.right * rightWeight).normalized;
 
-        transform.Translate(moveVector * Time.deltaTime * _moveSpeed);
+        playerRigid.MovePosition(transform.position + moveVector * Time.deltaTime * _moveSpeed);
+        //transform.Translate(moveVector * Time.deltaTime * _moveSpeed);
     }
     #endregion Move
 
