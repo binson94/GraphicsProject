@@ -49,7 +49,7 @@ public class MonsterController : MonoBehaviour
 
     #region BoxChase
     /// <summary> 박스 열었을 때, 박스 추적하는 기간, 시간 종료 시 원래 위치로 돌아감 </summary>
-    const float TIMER_START = 20;
+    const float TIMER_START = 10;
     /// <summary> 박스 추적하는 남은 기간 </summary>
     float remainTimer = 0;
     #endregion BoxChase

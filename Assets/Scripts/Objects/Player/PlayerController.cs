@@ -12,8 +12,8 @@ public class PlayerController : MonoBehaviour
     CameraController _cameraController = new CameraController();
 
     /// <summary> 플레이어 이동 속도 </summary>
-    //[SerializeField]
-    float _moveSpeed = 10f;
+    [SerializeField]
+    float _moveSpeed = 20f;
 
     Rigidbody playerRigid;
 
@@ -30,9 +30,14 @@ public class PlayerController : MonoBehaviour
         if(GameManager.Instance.GameState == Define.GameState.Play)
         {
             SeeMouse();
-            Move();
             GetInput();
         }
+    }
+
+    private void FixedUpdate()
+    {
+        if (GameManager.Instance.GameState == Define.GameState.Play)
+            Move();
     }
 
     #region Move
@@ -47,16 +52,12 @@ public class PlayerController : MonoBehaviour
         _cameraController.RotateCamera();
     }
 
+
+    Vector3 moveVector = Vector3.zero;
     /// <summary> 입력에 따른 캐릭터 이동 </summary>
     void Move()
     {
-        float forwardWeight = Input.GetAxis("Vertical");
-        float rightWeight = Input.GetAxis("Horizontal");
-
-        Vector3 moveVector = (transform.forward * forwardWeight + transform.right * rightWeight).normalized;
-
         playerRigid.MovePosition(transform.position + moveVector * Time.deltaTime * _moveSpeed);
-        //transform.Translate(moveVector * Time.deltaTime * _moveSpeed);
     }
     #endregion Move
 
@@ -64,6 +65,11 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.F))
             Interact();
+
+        float forwardWeight = Input.GetAxis("Vertical");
+        float rightWeight = Input.GetAxis("Horizontal");
+
+        moveVector = (transform.forward * forwardWeight + transform.right * rightWeight).normalized;
 
 #if UNITY_EDITOR
         if (Input.GetKey(KeyCode.L))
