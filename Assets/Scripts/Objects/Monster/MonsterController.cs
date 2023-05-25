@@ -18,11 +18,13 @@ public class MonsterController : MonoBehaviour
     }
 
     /// <summary> 느낌표 마크 </summary>
-    [SerializeField]
+    [Header("Model"), SerializeField]
     GameObject _exclamationMark;
+    /// <summary> 효과음 재생을 위한 소스 </summary>
+    [SerializeField]
+    AudioSource _audioSource;
 
     /// <summary> 몬스터의 현재 상태 </summary>
-    [SerializeField]
     MonsterState _state = MonsterState.Patrol;
     /// <summary> 몬스터의 현재 상태 </summary>
     MonsterState State
@@ -39,11 +41,9 @@ public class MonsterController : MonoBehaviour
 
     #region Patrol
     /// <summary> 순찰 시 목적지 리스트 </summary>
-    [Header("Patrol")]
-    [SerializeField]
+    [Header("Patrol"), SerializeField]
     List<Vector3> patrolPos = new List<Vector3>();
     /// <summary> 순찰 시 현재 목적지 index </summary>
-    [SerializeField]
     int _patrolIdx = 0;
     #endregion Patrol
 
@@ -57,6 +57,9 @@ public class MonsterController : MonoBehaviour
     #region PlayerChase
     /// <summary> 현재 감지 중인 플레이어 </summary>
     PlayerController _player;
+
+    /// <summary> raycast 필요 여부 반환 </summary>
+    public bool NeedCast { get => _player == null; }
     #endregion PlayerChase
 
     private void Awake()
@@ -160,6 +163,7 @@ public class MonsterController : MonoBehaviour
     /// <summary> 충돌체에서 플레이어 입장 감지 </summary>
     public void SetTarget(PlayerController player)
     {
+        SoundManager.Play(_audioSource, Define.SFX.MonsterFound);
         State = MonsterState.PlayerChase;
         _player = player;
     }

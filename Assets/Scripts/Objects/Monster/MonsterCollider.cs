@@ -10,11 +10,44 @@ public class MonsterCollider : MonoBehaviour
     [SerializeField]
     MonsterController _monster;
 
-    /// <summary> 플레이어 범위 입장 감지 </summary>
-    private void OnTriggerEnter(Collider other)
+    float _rayDistance;
+
+    private void Start()
     {
-        if (other.gameObject.tag == "Player")
-            _monster.SetTarget(other.GetComponent<PlayerController>());
+        _rayDistance = GetComponent<SphereCollider>().radius;
+    }
+
+    /// <summary> 플레이어 범위 입장 감지 </summary>
+    private void OnTriggerStay(Collider other)
+    {
+        if (_monster.NeedCast)
+            if (other.gameObject.tag == "Player")
+            {
+                if (DoRaycast(other.transform.position) == other.transform)
+                    _monster.SetTarget(other.GetComponent<PlayerController>());
+            }
+    }
+
+    Transform DoRaycast(Vector3 pos)
+    {
+        //벽과 플레이어만 감지
+        int mask = (1 << 7) | (1 << 6);
+
+        Vector3 currPos = transform.position + Vector3.up;
+
+        Ray ray = new Ray(currPos, (pos - currPos).normalized);
+
+        RaycastHit hit;
+        Debug.DrawRay(transform.position, pos - transform.position, Color.red, 2f);
+
+        if (Physics.Raycast(ray, out hit, _rayDistance, mask))
+        {
+            Debug.Log(hit.transform.gameObject.name);
+            return hit.transform;
+
+        }
+
+        return null;
     }
 
     /// <summary> 플레이어 범위 퇴장 감지 </summary>

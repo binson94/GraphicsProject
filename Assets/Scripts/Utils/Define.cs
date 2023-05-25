@@ -13,27 +13,16 @@ public class Define
         Lose,
     }
 
+    /// <summary> 씬 종류 </summary>
     public enum Scene
     {
         Title,
         Ingame,
     }
 
-    public enum Sound
-    {
-        SFX,
-        BGM,
-        MaxCount
-    }
-
+    /// <summary> 효과음 </summary>
     public enum SFX
     {
-        MaxCount
+        MonsterFound
     }
-    public enum BGM 
-    {
-        MaxCount
-    }
-
-
 }
