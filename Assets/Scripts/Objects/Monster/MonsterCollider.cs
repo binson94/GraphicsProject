@@ -28,6 +28,7 @@ public class MonsterCollider : MonoBehaviour
             }
     }
 
+    /// <summary> 충돌체 내 플레이어에게 raycasting </summary>
     Transform DoRaycast(Vector3 pos)
     {
         //벽과 플레이어만 감지

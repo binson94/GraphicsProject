@@ -7,6 +7,4 @@ public class GameScene : MonoBehaviour
     {
         Cursor.visible = false;
     }
-
-
 }

@@ -1,6 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
+/******
+도움말 용 스크린샷
+ ******/
 using UnityEngine;
 
 public class ScreenShot : MonoBehaviour
@@ -10,9 +10,6 @@ public class ScreenShot : MonoBehaviour
     void Start()
     {
         screenShot = PlayerPrefs.GetInt("screenshot", 0);
-
-        ScreenCapture.CaptureScreenshot("map.png");
-        Debug.Log(Application.dataPath);
     }
 
     private void Update()

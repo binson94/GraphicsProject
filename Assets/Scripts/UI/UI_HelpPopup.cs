@@ -1,6 +1,6 @@
 /******
 작성자 : 이우열
-작성 일자 : 23.05.17
+도움말 UI
  ******/
 using TMPro;
 using UnityEngine;
