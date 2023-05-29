@@ -33,6 +33,11 @@ public class MonsterController : MonoBehaviour
         set
         {
             _exclamationMark.SetActive(value == MonsterState.PlayerChase);
+            if (value == MonsterState.BoxChase)
+                _agent.speed = 3f;
+            else
+                _agent.speed = 2f;
+
             _state = value;
         }
     }
