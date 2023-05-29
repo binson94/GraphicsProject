@@ -1,8 +1,6 @@
 /******
 작성자 : 박성택
 카메라 회전 제어 클래스
-
-참조 : https://artsung410.tistory.com/88?category=1108662
  ******/
 using UnityEngine;
 

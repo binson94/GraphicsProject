@@ -31,7 +31,7 @@ public class MonsterCollider : MonoBehaviour
     Transform DoRaycast(Vector3 pos)
     {
         //벽과 플레이어만 감지
-        int mask = (1 << 7) | (1 << 6);
+        int mask = (1 << 4);
 
         Vector3 currPos = transform.position + Vector3.up;
 
